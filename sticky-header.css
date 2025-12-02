@@ -1,0 +1,5 @@
+[data-css-anchor="widget-mega_menu"] {
+    position: sticky;
+    top: 0px;
+    z-index: 1000;
+}
