@@ -1,0 +1,197 @@
+/* === FEATURED TOPICS CAROUSEL (STRICT VERSION) === */
+
+/* Limit and center the specific widget instance (idx="6") */
+.widget-container--featured_topics[data-idx="6"] .sitewidth {
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Specific layout for widget idx=6 */
+.widget-container--featured_topics[data-idx="6"] .featured-topics {
+  position: relative;
+  padding-top: 30px;
+  padding-bottom: 30px;
+  padding-left: 80px;    /* room for arrows */
+  padding-right: 80px;
+  overflow: hidden;
+  margin-top: 50px;
+  box-sizing: border-box;
+}
+
+/* Horizontal list */
+.widget-container--featured_topics[data-idx="6"] .featured-topics__list {
+  display: flex;
+  transition: transform 0.4s ease;
+}
+
+/* Individual cards: 2 full + 1.5 visible (≈40% width each) */
+.widget-container--featured_topics[data-idx="6"] .featured-topic {
+  flex: 0 0 40%;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+  border-radius: 10px;
+  overflow: hidden;
+  background-color: var(--config-background-color);
+  background-image: url("https://everpath-course-content.s3-accelerate.amazonaws.com/instructor%2Fdnb7s7j8r0zi9ge1f709d36a6%2Fpublic%2F1764752058%2FICONS_CC-10.1764752058331.png");
+  background-repeat: no-repeat;
+  background-position: right bottom;
+  background-size: cover;
+}
+
+/* Optional: also target the wrapper when it's a link card */
+.widget-container--featured_topics[data-idx="6"] .featured-topic,
+.widget-container--featured_topics[data-idx="6"] .featured-topic__url.card-widget-wrapper {
+  background-image: url("https://everpath-course-content.s3-accelerate.amazonaws.com/instructor%2Fdnb7s7j8r0zi9ge1f709d36a6%2Fpublic%2F1764752058%2FICONS_CC-10.1764752058331.png") !important;
+  background-repeat: no-repeat;
+  background-position: right bottom;
+  background-size: contain;
+  background-color: transparent !important;
+}
+
+/* Kill the full-card overlay link, we use a button instead */
+.widget-container--featured_topics[data-idx="6"] .featured-topic__url-link {
+  display: none !important;
+}
+
+/* Hide description & meta inside each card */
+.widget-container--featured_topics[data-idx="6"] .card-widget-text,
+.widget-container--featured_topics[data-idx="6"] .post-meta__container {
+  display: none !important;
+}
+
+/* Title wrapper */
+.widget-container--featured_topics[data-idx="6"] .featured-topic__title {
+  padding-top: 40px;
+  padding-right: 24px;
+  padding-bottom: 112px;
+  padding-left: 24px;
+  min-height: 140px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+}
+
+/* VIEW button (added by JS) */
+.widget-container--featured_topics[data-idx="6"] .featured-topic__view-btn {
+  margin-top: 18px;
+  margin-right: auto;
+  margin-bottom: 0;
+  margin-left: auto;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 26px;
+  padding-right: 26px;
+  border-radius: 4px;
+  border: none;
+  background: var(--config-link-base-color);
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  display: inline-block;
+}
+
+/* Arrows for this carousel instance */
+.widget-container--featured_topics[data-idx="6"] .ft-carousel__arrow {
+  position: absolute;
+  top: 50%;
+  /* TranslateY is standard; safe to use */
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+  z-index: 2;
+}
+
+/* Position arrows for idx=6 */
+.widget-container--featured_topics[data-idx="6"] .ft-carousel__arrow--prev {
+  left: 5px;
+}
+
+.widget-container--featured_topics[data-idx="6"] .ft-carousel__arrow--next {
+  right: 5px;
+}
+
+.widget-container--featured_topics[data-idx="6"] .ft-carousel__arrow--disabled {
+  opacity: 0.35;
+  cursor: default;
+  pointer-events: none;
+}
+
+/* === GENERIC featured_topics LAYOUT (ALL INSTANCES) === */
+
+.widget-container--featured_topics .featured-topics {
+  position: relative;
+  max-width: 1200px;
+  margin-top: 0;
+  margin-bottom: 0;
+  margin-left: auto;
+  margin-right: auto;
+  padding-top: 30px;
+  padding-bottom: 30px;
+  padding-left: 70px;
+  padding-right: 70px;
+  box-sizing: border-box;
+}
+
+/* Generic arrows styling (all instances) */
+.widget-container--featured_topics .ft-carousel__arrow {
+  width: 15px !important;
+  height: 25px !important;
+  background: none !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  font-size: 35px !important;
+  font-weight: normal !important;
+  color: var(--config-text-color) !important;
+  z-index: 3;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.widget-container--featured_topics .ft-carousel__arrow--prev {
+  left: 5px;
+}
+
+.widget-container--featured_topics .ft-carousel__arrow--next {
+  right: 5px;
+}
+
+/* Make sure the sliding list sits "behind" the masks */
+.widget-container--featured_topics .featured-topics__list {
+  position: relative;
+  z-index: 0;
+}
+
+/* MASKS on left & right so cards can slide 'under' edges */
+.widget-container--featured_topics .featured-topics::before,
+.widget-container--featured_topics .featured-topics::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 60px; 
+  z-index: 1;
+  background: var(--config-background-color);
+}
+
+.widget-container--featured_topics .featured-topics::before {
+  left: 0;
+}
+
+.widget-container--featured_topics .featured-topics::after {
+  right: 0;
+}
+
+/* Hide the "Featured topics" heading but keep markup */
+.widget-container--featured_topics .featured-topics__heading {
+  display: none;
+}
