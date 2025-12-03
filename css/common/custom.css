@@ -1,0 +1,23 @@
+/* Make Hero Image Bigger */
+body[data-entity="HomePage"] .generic_hero.qa-generic_hero-container,
+body[data-entity="HomePage"] .brand-hero.qa-brand-hero.custom-hero-banner {
+  height: 550px !important;
+}
+
+/* Full Width Nav adjustments */
+.main-navigation-sitewidth.main-navigation-sitewidth-max-content {
+  padding: 20px 40px;
+  margin: 0 auto;
+  max-width: 1680px;
+}  
+
+/* Animations */
+body[data-entity="HomePage"] article.featured-topic.quicklink__box.card-widget-wrapper.quicklink-icon:hover {
+    transform: translateY(-8px);
+  	transition: transform 0.3s ease;
+}
+
+/* HTML Widget */
+.custom-html-widget-wrapper {
+  margin: 0;
+}
