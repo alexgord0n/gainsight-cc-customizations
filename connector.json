@@ -1,0 +1,23 @@
+{
+  "id": 152,
+  "name": "Get Calendar Events",
+  "url": "https://api2-us-west-2.insided.com/v2/events",
+  "method": "GET",
+  "headers": [
+    { "key": "Accept", "value": "application/json", "overridable": false }
+  ],
+  "request_body": null,
+  "permalink": "get-calendar-events",
+  "authentication": {
+    "type": "oauth_client_credentials",
+    "config": {
+      "token_url": "https://api2-us-west-2.insided.com/oauth2/token",
+      "client_id": "{{ get_secret('calendar_id') }}",
+      "client_secret": "{{ get_secret('calendar_secret') }}",
+      "grant_type": "client_credentials",
+      "scope": "write",
+      "audience": "https://api2-us-west-2.insided.com",
+      "client_authentication": "basic"
+    }
+  }
+}

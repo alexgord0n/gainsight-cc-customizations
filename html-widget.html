@@ -1,0 +1,192 @@
+<!-- FullCalendar -->
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
+
+<style>
+  .cc-calendar-wrap { max-width: 1100px; margin: 24px auto; padding: 0 16px; }
+  .fc-theme-standard td, .fc-theme-standard th { border-color: #e5e7eb; }
+  .cc-status { text-align:center; color:#6b7280; padding:12px; }
+  .cc-error  { color:#b91c1c; background:#fee2e2; border:1px solid #fecaca; padding:8px 10px; border-radius:8px; display:inline-block; }
+</style>
+
+<div class="cc-calendar-wrap">
+  <div id="gscc-calendar"></div>
+  <div id="gscc-status" class="cc-status" aria-live="polite" style="display:none"></div>
+
+</div>
+
+<script>
+(function () {
+  const CONTAINER_ID = 'gscc-calendar';
+  const STATUS = document.getElementById('gscc-status');
+
+  // --- status helpers ---
+  const showStatus = (msg) => { STATUS.style.display = 'block'; STATUS.textContent = msg || 'Loading events&hellip;'; };
+  const hideStatus = () => { STATUS.textContent = ''; STATUS.style.display = 'none'; };
+  const setError = (msg) => {
+    STATUS.innerHTML = '<span class="cc-error">' + (msg || 'Could not load events.') + '';
+    STATUS.style.display = 'block';
+  };
+
+  // Hide any stray &ldquo;Loading events&hellip;&rdquo; nodes from the native page once our data is in
+  function hideStrayLoaders() {
+    const candidates = Array.from(document.querySelectorAll('div, p, span, li, h4, h5'));
+    candidates.forEach(el => {
+      const t = (el.innerText || '').trim().toLowerCase();
+      if (t === 'loading events&hellip;' || t === 'loading events...' || t === 'loading events') {
+        el.style.display = 'none';
+      }
+    });
+  }
+
+  // --- URL normalizer + community fallback ---
+  function normalizeEventUrl(ev) {
+    const raw = ev?.url;
+    const origin = window.location.origin;
+
+    // if empty or obviously generic, fallback to community detail by id
+    const fallback = () => `${origin}/events/${encodeURIComponent(String(ev?.id ?? ''))}`;
+
+    if (!raw) return fallback();
+
+    try {
+      // Already absolute?
+      if (/^https?:\/\//i.test(raw)) {
+        const u = new URL(raw);
+        // If it's literally the bare insided.com root, treat as generic and fallback
+        if (u.hostname.endsWith('insided.com') && (u.pathname === '/' || u.pathname === '')) {
+          return fallback();
+        }
+        return u.toString();
+      }
+      // Bare host like "insided.com/foo"
+      if (/^[\w.-]+\.[A-Za-z]{2,}.*$/.test(raw)) return `https://${raw}`;
+
+      // Relative path -> same origin
+      return new URL(raw, origin).toString();
+    } catch {
+      return fallback();
+    }
+  }
+
+  // --- connector fetch ---
+  async function fetchEvents(startStr, endStr, startDateObj, endDateObj) {
+    const EXECUTE_URL = "/widget-service/connectors/152/execute";
+
+    const startISO = (startDateObj instanceof Date) ? startDateObj.toISOString() : (startStr + "T00:00:00.000Z");
+    const endISO   = (endDateObj   instanceof Date) ? endDateObj.toISOString()   : (endStr   + "T23:59:59.999Z");
+
+    const url = new URL(EXECUTE_URL, window.location.origin);
+    url.searchParams.set("startDate", startISO);
+    url.searchParams.set("endDate",   endISO);
+    url.searchParams.set("limit",     "100");
+    url.searchParams.set("offset",    "0");
+
+    const res  = await fetch(url.toString(), { method: "GET", headers: { accept: "application/json" } });
+    const text = await res.text();
+    if (!res.ok) throw new Error(`HTTP ${res.status} ${text || ""}`);
+
+    let json;
+    try { json = text ? JSON.parse(text) : null; } catch { throw new Error("Bad JSON from connector"); }
+
+    const rows = Array.isArray(json?.result) ? json.result : (Array.isArray(json) ? json : []);
+    return (rows || []).map(ev => ({
+      id: String(ev.id ?? ""),
+      title: ev.title || "Untitled event",
+      start: ev.startDate || null,
+      end:   ev.endDate   || null,
+      url:   normalizeEventUrl(ev),
+      extendedProps: { contentHtml: ev.content || "", raw: ev }
+    }));
+  }
+
+  // --- calendar ---
+  let calendar = null, initialized = false;
+
+  function buildCalendar(el){
+    if (initialized) return; initialized = true;
+
+    calendar = new FullCalendar.Calendar(el, {
+      initialView: 'dayGridMonth',
+      timeZone: 'local',
+      headerToolbar: { left:'prev,next today', center:'title', right:'dayGridMonth,timeGridWeek,timeGridDay,listWeek' },
+      eventTimeFormat: { hour: '2-digit', minute: '2-digit', meridiem: 'short' },
+
+      // Show/hide our spinner only while FC is loading
+      loading: (isLoading) => {
+        if (isLoading) showStatus('Loading events&hellip;');
+        else hideStatus();
+      },
+
+      events: (info, success, failure) => {
+  // show our spinner immediately
+  showStatus('Loading events&hellip;');
+
+  fetchEvents(info.startStr, info.endStr, info.start, info.end)
+    .then(items => {
+      success(items);      // render events
+      hideStatus();        // always hide after success
+    })
+    .catch(e => {
+      console.error('[Calendar] fetch error:', e);
+      success([]);         // clear FC&rsquo;s internal loading state
+      setError(e.message || 'Failed to load events.');
+      // keep the error visible; do not re-hide here
+      if (failure) failure(e);
+    });
+},
+
+
+      eventClick: (info) => {
+        const link = info.event.url;
+        if (link) {
+          window.open(link, '_blank', 'noopener');
+          info.jsEvent.preventDefault();
+        }
+      }
+    });
+
+    calendar.render();
+  }
+
+  // Render once container is visible & sized
+  function whenVisibleAndSized(el, cb){
+    const io = new IntersectionObserver((entries)=>{
+      entries.forEach(entry=>{
+        if (entry.isIntersecting) {
+          const ro = new ResizeObserver(()=>{
+            const w = el.getBoundingClientRect().width;
+            if (w > 10) { ro.disconnect(); cb(); }
+          });
+          ro.observe(el); io.disconnect();
+        }
+      });
+    }, { threshold: 0.01 });
+    io.observe(el);
+  }
+
+  function init(){
+    const el = document.getElementById(CONTAINER_ID);
+    if (!el) { setError('Calendar container missing.'); return; }
+    if (!window.FullCalendar) { setError('FullCalendar failed to load.'); return; }
+
+    hideStatus(); // keep hidden until FC signals loading
+
+    const w = el.getBoundingClientRect().width;
+    if (w > 10) buildCalendar(el);
+    else whenVisibleAndSized(el, ()=> buildCalendar(el));
+
+    // keep size fresh if page layout changes later
+    let lastW = 0;
+    const keep = new ResizeObserver(()=>{
+      if (!calendar) return;
+      const cur = el.getBoundingClientRect().width;
+      if (Math.abs(cur - lastW) > 10) { lastW = cur; calendar.updateSize(); }
+    });
+    keep.observe(el);
+  }
+
+  if (document.readyState === 'complete') init();
+  else window.addEventListener('load', init);
+})();
+</script>
