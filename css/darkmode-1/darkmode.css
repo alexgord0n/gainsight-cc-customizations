@@ -1,0 +1,178 @@
+
+/* ============================================
+   Custom Theme Overrides for Gainsight Community
+   ============================================ */
+
+/* ---------- CSS Variables ---------- */
+:root {
+  --color-black: #000;
+  --color-dark-gray: #121212;
+  --color-border-gray: #666666;
+  --color-white: #fff;
+  --color-link-hover: #1c73e8;
+}
+
+/* ---------- CKEditor Panel Item Styling ---------- */
+.cke_panel_listItem a,
+.cke_selected.cke_panel_listItem a,
+.cke_panel_listItem a:hover,
+.cke_panel_listItem a:focus,
+.cke_panel_listItem a:active {
+  color: var(--config-body-background-color) !important;
+}
+
+/* ---------- Search Result Titles ---------- */
+.algolia-search-results-section__title-label {
+  color: var(--config-body-background-color) !important;
+}
+
+/* ---------- Background Tweaks for Dark Theme ---------- */
+.topic-curation-destination__container,
+.popup-component table,
+.popup-component table td,
+.box,
+.search-revamp .instant-search-wrapper .instant-search__source-type-filter .instant-search__filter-tab-button,
+.c-dropdown .c-dropdown__content,
+.product-area-dropdown-options-container,
+.product-area-dropdown-options-container .control-search-box input,
+.topic-create_suggestions-wrapper input,
+.poll-wrapper,
+.poll-wrapper input,
+.tag--pill,
+.category-list__container,
+.list-widget-wrapper,
+.thread-list-title,
+.stats-bar,
+.event-calendar-icon-container .event__date,
+.tooltip--day.tooltip .tooltip__content,
+.tooltip--day.tooltip .tooltip__content--left,
+.tooltip .tooltip__content--publish-date,
+.wysiwyg-editor__mention--tooltip,
+.event-attendees-container,
+.event-content-container,
+.event-details-container,
+.event-featured-topics-container,
+.event-featured-topics-error-container,
+.event-header-container,
+.chip,
+.community-modal,
+.control-modal,
+.language-preference-modal,
+.mfp-wrap .mfp-inline-holder .mfp-content,
+.notification-center__panel,
+.dropdown-container ul li,
+.search-v2 .algolia-hit-container,
+.search-v2 .algolia-hit-item,
+.search-v2 .algolia-search-results-section__title,
+.search-v2 input[type=search].search-box__input,
+.search-v2 .algolia-hit-container-scroll,
+.public-tag-container .public-tag-list-container .public-tag-list-item,
+.twig_default-setting-profile .sections__nav .tabs--navigation .tabs__item > a,
+.twig_default-setting-profile .sections__nav ul.tabs--navigation,
+.twig_default-settings-email .sections__nav .tabs--navigation .tabs__item > a,
+.twig_default-settings-email .sections__nav ul.tabs--navigation,
+.twig_default-settings-general .sections__nav .tabs--navigation .tabs__item > a,
+.twig_default-settings-general .sections__nav ul.tabs--navigation,
+.search-revamp .instant-search-wrapper .smart-summary,
+.search-revamp .instant-search-wrapper .input-wrapper .pre-icon-wrapper + .input-group,
+.button-control-new--secondary,
+[class*="popup"],
+.tooltip,
+.popup,
+.hover,
+.twig_page-group .group-details_hero__user-actions button.user-action__group-subscription-btn,
+.twig_page-group .group-details_hero__user-actions button.user-action__leave-group-btn,
+.avatar-hover,
+.profile-hover,
+.avatar:hover + .tooltip,
+.avatar:hover + .popup,
+.profilepicture:hover + .tooltip,
+.avatar .hover-element,
+.avatar .profilepicture,
+#downshift-0-input,
+.ideation_pipeline .pipeline-col-list > *,
+#topic_title,
+.dropdown-selector__header,
+.dropdown-selector__item-wrapper--expanded {
+  background-color: var(--config-body-background-color) !important;
+}
+
+/* ---------- Transparent Backgrounds ---------- */
+.topic-list-item-card .topic-list-item-card_info-container .topic-list-item-card_footer-container .topic-list-item-card_topic-metrics,
+.topic-curation-destination__container .topic-curation__item .topic-curation__item-link,
+.ask-question-widget__widget {
+  background-color: transparent !important;
+}
+
+/* ---------- CKEditor Dialog Reset Styles ---------- */
+.cke_dialog .cke_dialog_body .cke_dialog_contents_body,
+.cke_reset_all,
+.cke_reset_all *,
+.cke_reset_all a,
+.cke_reset_all textarea {
+  color: var(--config-body-background-color) !important;
+}
+
+/* ---------- Dropdown Styling ---------- */
+.dropdown {
+  position: absolute;
+  z-index: 1026;
+  background: var(--config-body-background-color);
+  border: 0px solid var(--config--main-border-base-color);
+  -webkit-box-shadow: 1px 2px 2px hsla(0, 0%, 39.2%, .2);
+  box-shadow: 1px 2px 2px hsla(0, 0%, 39.2%, .2);
+  font-size: 14px;
+}
+
+/* ---------- Chips ---------- */
+.chip {
+  border: 0.2px solid var(--config-body-background-color);
+  color: var(--config-body-background-color);
+}
+
+/* ---------- Avatar Styling (including overlay logo) ---------- */
+.avatar {
+  position: relative;
+  display: inline-block;
+  margin-left: 7px;
+}
+
+.avatar .profilepicture {
+  border-radius: 50%;
+  background-color: var(--config-body-background-color);
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  line-height: 1;
+}
+
+/* Google-style overlay icon for avatar */
+.avatar::after {
+  content: "";
+  position: absolute;
+  bottom: 10%;
+  left: -15%;
+  width: 40%;
+  height: 40%;
+  border-radius: 50%;
+  background-color: var(--config-body-background-color);
+  background-image: url('https://i.ibb.co/Nd5FjWg6/images-removebg-preview.png');
+  background-size: 80%;
+  background-repeat: no-repeat;
+  background-position: center;
+  border: 0.5px solid var(--config-body-background-color);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  z-index: 2;
+}
+
+/* ---------- Link/Text Color Overrides ---------- */
+.event-types-list-container .event-types-list li.event-types-list-item .event-types-list-item__button,
+.dropdown-links,
+.button-control-new--secondary,
+td.cke_dialog_footer a.cke_dialog_ui_button span.cke_dialog_ui_button {
+  color: var(--config-body-background-color) !important;
+}
+
+.dropdown-selector__item:hover {
+  color: var(--color-link-hover);
+}
