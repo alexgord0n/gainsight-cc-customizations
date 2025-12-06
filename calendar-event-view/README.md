@@ -88,12 +88,12 @@ events?sort=upcoming&limit=100
 
 Go to **Control → Settings → Secrets** and create two secrets:
 
-### **A. CALENDAR_CLIENT_ID**
+### **A. calendar_id**
 ```
 <your Client ID>
 ```
 
-### **B. CALENDAR_CLIENT_SECRET**
+### **B. calendar_secret**
 ```
 <your Client Secret>
 ```
@@ -106,8 +106,8 @@ Edit the `get-calendar-events` connector:
 
 | Connector Field | CC Secret |
 |-----------------|-----------|
-| `client_id`     | `{{ secret:CALENDAR_CLIENT_ID }}` |
-| `client_secret` | `{{ secret:CALENDAR_CLIENT_SECRET }}` |
+| `calendar_id`     | `{{ secret:CALENDAR_ID }}` |
+| `calendar_secret` | `{{ secret:CALENDAR_SECRET }}` |
 
 Save.
 
