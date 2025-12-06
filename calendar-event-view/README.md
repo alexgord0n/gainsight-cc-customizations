@@ -1,125 +1,138 @@
 # Gainsight CC – Schedule-X Calendar Event View
 
-This folder contains **copy‑paste HTML widgets** for embedding a modern Schedule‑X calendar inside a **Gainsight Customer Community (CC)** HTML widget.
+This folder contains **copy‑paste HTML widgets** for embedding a modern, theme‑aware, Schedule‑X powered calendar directly inside a **Gainsight Customer Community (CC)** HTML widget.
 
-Two widget variants are provided:
+Two versions are included:
 
 - **`calendar-brand-widget.html`** — Calendar colors follow your **brand color** (`--config--main-color-brand`)
 - **`calendar-cta-widget.html`** — Calendar colors follow your **CTA button color** (`--config-button-cta-background-color`)
 
 These widgets:
 
-- Render **Month / Week / Day** views using Schedule‑X  
-- Load events via **Gainsight CC Secure API Connectors**  
-- Map timestamps into proper timed events  
-- Match CC’s styling using CSS variables  
-- Open events using `/events/{id}` in the same tab  
+- Render **Month / Week / Day** using Schedule‑X  
+- Load CC events securely via **Secure API Connectors**  
+- Use **client‑credential OAuth** authentication  
+- Convert CC timestamps into timed Schedule‑X events  
+- Match your community’s CSS variables  
+- Open CC event pages using `/events/{id}` in the same tab  
 
-No external JS hosting is required — copy and paste the widget’s HTML into CC.
+No external JS bundling needed — just copy/paste one widget file into CC.
 
 ---
 
 # 🚀 How to Use
 
-## 1) Choose Your Theme Variant
+## 1. Pick Your Widget Flavor
 
-Pick one of the widget files:
+Choose one of the HTML widget files:
 
 | File | Description |
 |------|-------------|
-| `calendar-brand-widget.html` | Calendar themed using **brand color** |
-| `calendar-cta-widget.html`   | Calendar themed using **CTA button color** |
+| `calendar-brand-widget.html` | Looks like your **brand color** |
+| `calendar-cta-widget.html`   | Looks like your **primary CTA button** |
 
-You can swap variants at any time by replacing the widget code.
-
----
-
-# 🔧 Required Setup (Back-end Admin Steps)
-
-Before the calendar widget can load events, you **must** configure:
-
-1. A **CC API Key**
-2. A **Secure API Connector**
-3. CC **Secrets** for client_id / client_secret
-
-Follow these steps exactly.
+Click the file → **Raw** → copy everything → paste into a CC HTML widget.
 
 ---
 
-# ✅ Step 1 — Create an API Key in Gainsight CC
+# 🔧 Required Backend Setup
 
-1. Go to **Control → Integrations → API Keys**  
-2. Create a new API key  
+Before the calendar will show events, you **must** configure:
+
+1. An **API Key**  
+2. A **Secure API Connector**  
+3. Two **Secrets** that store your client credentials  
+
+Follow the steps below.
+
+---
+
+# ✅ Step 1 — Create an API Key (Client ID + Secret)
+
+In Gainsight CC:
+
+1. Navigate to **Control → Integrations → API Keys**  
+2. Click **Create Key**  
 3. Copy the:
    - **Client ID**
    - **Client Secret**
 
-You’ll use these in Steps 3 and 4.
+You’ll need these in Step 3.
 
 ---
 
-# ✅ Step 2 — Add the Secure API Connector
-
-1. Go to **Control → Integrations → Connectors (Secure)**  
-2. Click **Add Connector** → choose **HTTPS**  
-3. Configure:
-
-```
-Name: Calendar Events
-Permalink: get-calendar-events
-Method: GET
-Base URL: https://<your-community-domain>/api/v2/
-```
-
-4. Set request path, e.g.:
-
-```
-events?sort=upcoming&limit=100
-```
-
-5. Under **Authentication**, choose:  
-   **API Key (client_credentials)**
-
-6. Save the connector.
+# ✅ Step 2 — Add the Secure API Connector  
+Instead of configuring by hand, simply **copy & paste this JSON** into the connector setup.
 
 ---
 
-# ✅ Step 3 — Create CC Secrets
+## 📌 **US Data Center**
 
-Go to **Control → Settings → Secrets** and create two secrets:
-
-### **A. calendar_id**
-```
-<your Client ID>
-```
-
-### **B. calendar_secret**
-```
-<your Client Secret>
+```json
+{
+  "id": 152,
+  "name": "Get Calendar Events",
+  "url": "https://api2-us-west-2.insided.com/v2/events",
+  "method": "GET",
+  "headers": [
+    { "key": "Accept", "value": "application/json", "overridable": false }
+  ],
+  "request_body": null,
+  "permalink": "get-calendar-events",
+  "authentication": {
+    "type": "oauth_client_credentials",
+    "config": {
+      "token_url": "https://api2-us-west-2.insided.com/oauth2/token",
+      "client_id": "{{ get_secret('calendar_id') }}",
+      "client_secret": "{{ get_secret('calendar_secret') }}",
+      "grant_type": "client_credentials",
+      "scope": "write",
+      "audience": "https://api2-us-west-2.insided.com",
+      "client_authentication": "basic"
+    }
+  }
+}
 ```
 
 ---
 
-# ✅ Step 4 — Connect Secrets to the Connector
+## 🌍 **EU Data Center**
 
-Edit the `get-calendar-events` connector:
+If your community is on the **EU cluster**, change:
 
-| Connector Field | CC Secret |
-|-----------------|-----------|
-| `calendar_id`     | `{{ secret:CALENDAR_ID }}` |
-| `calendar_secret` | `{{ secret:CALENDAR_SECRET }}` |
+```json
+"url": "https://api2-eu-west-1.insided.com/v2/events",
+"token_url": "https://api2-eu-west-1.insided.com/oauth2/token",
+"audience": "https://api2-eu-west-1.insided.com"
+```
 
-Save.
-
-Your connector now authenticates securely using CC’s internal secret system.
+Everything else stays the same.
 
 ---
 
-# 🧪 Step 5 — Test Your Connector
+# ✅ Step 3 — Create Secrets
 
-Click **Test Request** inside the connector.
+In **Control → Settings → Secrets**, add:
 
-You should see:
+| Secret Name | Value |
+|-------------|--------|
+| `calendar_id` | (Your API Key’s Client ID) |
+| `calendar_secret` | (Your API Key’s Client Secret) |
+
+These are referenced inside your connector like:
+
+```json
+"client_id": "{{ get_secret('calendar_id') }}"
+"client_secret": "{{ get_secret('calendar_secret') }}"
+```
+
+---
+
+# 🧪 Step 4 — Test the Connector
+
+Inside the connector, click **Test Request**.
+
+A successful response looks like:
 
 ```json
 {
@@ -132,74 +145,72 @@ You should see:
       "url": "/events/6"
     }
   ],
-  "_metadata": {
-    "totalCount": 1
-  }
+  "_metadata": { "totalCount": 1 }
 }
 ```
 
-If you see event data, you’re ready for the widget installation.
+If this works → you’re ready to install the widget.
 
 ---
 
-# 🧩 Step 6 — Install the Calendar Widget
+# 🧩 Step 5 — Install the Calendar Widget
 
-1. Open the CC page where you want the calendar  
-2. Add an **HTML widget**  
-3. Open one of the widget files:
-   - `calendar-brand-widget.html`
+1. Go to **Content → Pages**  
+2. Open the page where the calendar should appear  
+3. Add an **HTML widget**  
+4. Paste in:
+   - `calendar-brand-widget.html`  
+     **OR**
    - `calendar-cta-widget.html`
-4. Click **Raw** on GitHub  
-5. Copy **everything**  
-6. Paste into the HTML widget  
-7. Save & publish  
+5. Save & publish
 
-The calendar should now render in Month, Week, and Day views with real community events.
+The calendar will now:
+
+- Render Schedule‑X
+- Load all CC events
+- Link to `/events/{id}` directly
+- Theme itself correctly using CC variables
 
 ---
 
-# 🎨 Theming (Brand vs CTA)
+# 🎨 Theming Overview
 
-Both widgets override Schedule‑X's CSS variables:
+Each widget includes a `<style>` block that overrides Schedule‑X CSS variables:
 
-### Brand Variant
-- Primary accent: `--config--main-color-brand`
-- Best if your community uses brand color for navigation and accents
+For *brand* version:
 
-### CTA Variant
-- Primary accent: `--config-button-cta-background-color`
-- Best if your community uses CTA buttons as the main visual anchor
+- `--sx-color-primary` → `--config--main-color-brand`
+- `--sx-color-primary-container` → 15% brand tint
+- Hover & ripple → 10% brand tint
 
-Both will automatically update if your CC theme colors change.
+For *CTA* version:
+
+- Same structure but tied to:
+  - `--config-button-cta-background-color`
+  - `--config-button-cta-color`
+
+Both adapt automatically if your CC theme changes.
 
 ---
 
 # 🛠 Optional Tweaks
 
-### Default view
-Change:
+### Default view (Month vs Week vs Day)
 
-```js
-var defaultViewName =
-  (viewWeek && viewWeek.name) ||
-  (viewMonthGrid && viewMonthGrid.name) ||
-  views[0].name;
-```
-
-To force Month:
+To default to Month:
 
 ```js
 var defaultViewName = 'month-grid';
 ```
 
 ### Calendar height
+
 ```css
-#gs-calendar {
-  height: 650px;
-}
+#gs-calendar { height: 650px; }
 ```
 
-### Events per day (Month view)
+### Month event density
+
 ```js
 monthGridOptions: { nEventsPerDay: 4 }
 ```
@@ -208,44 +219,38 @@ monthGridOptions: { nEventsPerDay: 4 }
 
 # 🐞 Troubleshooting
 
-### Calendar does not render
-Check DevTools console for:
+### Calendar doesn’t render
+Check browser console for:
 - `window.SXCalendar not available`
 - `WidgetServiceSDK not available`
-- Connector errors (permalink, secrets, API base URL)
+- Connector authentication errors
 
-### Events only show in Month view
-Connector timestamps **must include time**, e.g.:
+### Events only in Month view
+Connector timestamps must include **time**, example:
 
-- Correct: `2025-11-06T01:00:00-07:00`
-- Incorrect: `2025-11-06`
+✔ `2025-11-06T01:00:00-07:00`  
+✘ `2025-11-06`
 
-### Click does not open event  
-Check console:
-
-```
-[GS CAL] onEventClick resolved URL: https://<domain>/events/<id>
-```
-
-If payload changes, adjust the click handler accordingly.
+### Clicking event does nothing
+Ensure the event object includes an `id`.
 
 ---
 
 # 📁 Files in This Folder
 
-| File | Description |
-|------|-------------|
-| `calendar-brand-widget.html` | Calendar themed with **brand color** |
-| `calendar-cta-widget.html`   | Calendar themed with **CTA color** |
-| `README.md`                  | This documentation |
+| File | Purpose |
+|------|---------|
+| `calendar-brand-widget.html` | Brand-color calendar widget |
+| `calendar-cta-widget.html`   | CTA-based calendar widget |
+| `README.md`                  | Setup & usage instructions |
 
 ---
 
-# 🧭 Roadmap (Future Enhancements)
+# 🧭 Roadmap
 
-- Sync CC event filters with calendar  
-- Optionally host widget JS/CSS via GitHub Pages  
-- Dark mode version  
+- Sync CC Events filters with Schedule‑X  
+- Support externally hosted JS bundles if CC loads scripts earlier  
+- Add dark‑mode / high‑contrast variants  
 - Multi-calendar support  
 
-If you want help extending the widget, improving UX, or supporting more CC theming, just ask!
+Need help adjusting or extending this widget? Just ask!
