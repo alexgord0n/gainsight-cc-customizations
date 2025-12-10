@@ -1,0 +1,277 @@
+<style>
+  .demo-header-wrapper {
+    width: 100%;
+    background: #ffffff;
+    border-bottom: 1px solid #ddd;
+    font-family: "Open Sans", Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    position: relative;
+    z-index: 11000;
+  }
+
+  .demo-header-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+
+  .logo-dropdown {
+    position: relative;
+    cursor: pointer;
+  }
+
+  .logo-dropdown-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .logo-dropdown img {
+    width: 250px;
+    height: auto;
+  }
+
+  .logo-dropdown svg {
+    width: 14px;
+    height: 14px;
+    fill: #333;
+  }
+
+  .logo-dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+    z-index: 11001;
+    min-width: 260px;
+    white-space: nowrap;
+  }
+
+  .logo-dropdown-menu a {
+    display: block;
+    padding: 10px 14px;
+    text-decoration: none;
+    color: #333;
+  }
+
+  .logo-dropdown-menu a:hover {
+    background: #f0f0f0;
+  }
+
+  .logo-dropdown:hover .logo-dropdown-menu {
+    display: block;
+  }
+
+  .demo-header-links {
+    flex: 1;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+  }
+
+  .demo-header-links .menu-item {
+    position: relative;
+  }
+
+  .demo-header-links .menu-item > a {
+    text-decoration: none;
+    color: #333;
+    font-weight: 600;
+    padding: 6px 10px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .demo-header-links .menu-item svg {
+    width: 12px;
+    height: 12px;
+    fill: currentColor;
+  }
+
+  .demo-header-links .submenu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: white;
+    border: 1px solid #ccc;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    min-width: 200px;
+    z-index: 11001;
+    padding: 4px 0;
+    border-radius: 4px;
+  }
+
+  .demo-header-links .submenu a {
+    display: block;
+    padding: 10px 14px;
+    text-decoration: none;
+    color: #333;
+    text-align: left;
+    white-space: nowrap;
+  }
+
+  .demo-header-links .submenu a:hover {
+    background: #f0f0f0;
+  }
+
+  .demo-header-links .menu-item:hover .submenu {
+    display: block;
+  }
+</style>
+
+<div id="custom-product-header-container"></div>
+
+<script>
+(function () {
+  const PRODUCT_ANDROID = 'android';
+  const PRODUCT_CHROMEOS = 'chromeos';
+
+  const chevronIcon = `
+    <svg viewBox="0 0 24 24">
+      <path d="M7.41 8.59 12 13.17l4.59-4.58L18 10l-6 6-6-6z"></path>
+    </svg>
+  `;
+
+  const headers = {
+    android: `
+      <div class="demo-header-wrapper">
+        <div class="demo-header-inner">
+          <div class="logo-dropdown">
+            <div class="logo-dropdown-trigger">
+              <img src="https://www.androidenterprise.community/t5/s/ypaoq37543/m_assets/themes/Android/androidlogo.svg?time" alt="Android Logo">
+              ${chevronIcon}
+            </div>
+            <div class="logo-dropdown-menu">
+              <a href="#" data-product="android" data-url="https://google-en-community.insided.com/">Android Enterprise Customer Community</a>
+              <a href="#" data-product="chromeos" data-url="https://google-en-community.insided.com/p/chromeos">ChromeOS Customer Community</a>
+            </div>
+          </div>
+          <div class="demo-header-links">
+            <div class="menu-item">
+              <a href="/news-info-1">News & Info ${chevronIcon}</a>
+              <div class="submenu">
+                <a href="/product-news-info-46">Product news & info</a>
+                <a href="/service-announcements-3">Service announcements</a>
+                <a href="/community-info-guides-2">Community info & guidelines</a>
+              </div>
+            </div>
+            <div class="menu-item">
+              <a href="/discussions-5">Discussions ${chevronIcon}</a>
+              <div class="submenu">
+                <a href="/general-discussions-7">General discussions</a>
+                <a href="/community-off-topic-6">Community off-topic</a>
+              </div>
+            </div>
+            <div class="menu-item">
+              <a href="#">Resources ${chevronIcon}</a>
+              <div class="submenu">
+                <a href="/events?tab=upcoming&type=Android">Webinars & events</a>
+                <a href="/product-updates?filters%5BproductArea%5D%5B0%5D=1">Community blog</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    `,
+    chromeos: `
+      <div class="demo-header-wrapper">
+        <div class="demo-header-inner">
+          <div class="logo-dropdown">
+            <div class="logo-dropdown-trigger">
+              <img src="https://www.androidenterprise.community/t5/s/ypaoq37543/m_assets/themes/chromeos/chromeosbrandlogo.svg?time" alt="ChromeOS Logo">
+              ${chevronIcon}
+            </div>
+            <div class="logo-dropdown-menu">
+              <a href="#" data-product="android" data-url="https://google-en-community.insided.com/">Android Enterprise Customer Community</a>
+              <a href="#" data-product="chromeos" data-url="https://google-en-community.insided.com/p/chromeos">ChromeOS Customer Community</a>
+            </div>
+          </div>
+          <div class="demo-header-links">
+            <div class="menu-item">
+              <a href="/community-info-43">Community Info ${chevronIcon}</a>
+              <div class="submenu">
+                <a href="/community-news-44">Community News</a>
+                <a href="/community-guides-45">Community Guide</a>
+              </div>
+            </div>
+            <div class="menu-item">
+              <a href="/discussions-31">Discussions ${chevronIcon}</a>
+              <div class="submenu">
+                <a href="/general-discussions-32">General discussions</a>
+                <a href="/community-off-topic-33">Community off-topic</a>
+              </div>
+            </div>
+            <div class="menu-item">
+              <a href="/resources-41">Resources ${chevronIcon}</a>
+              <div class="submenu">
+                <a href="/product-hub-42">Product Hub</a>
+                <a href="/user-guides-17">User Guides</a>
+                <a href="/events?tab=upcoming&type=ChromeOS">Events</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    `
+  };
+
+  function renderHeader(product) {
+    const container = document.getElementById('custom-product-header-container');
+    if (!container) return;
+
+    container.innerHTML = headers[product];
+
+    document.querySelectorAll('.logo-dropdown-menu a').forEach(link => {
+      link.addEventListener('click', function (e) {
+        e.preventDefault();
+        const newProduct = this.getAttribute('data-product');
+        const url = this.getAttribute('data-url');
+        localStorage.setItem('selectedProduct', newProduct);
+        window.location.href = url;
+      });
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    const selected = localStorage.getItem('selectedProduct') || 'android';
+    renderHeader(selected);
+  });
+})();
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  // Only apply this on the homepage
+  if (!document.body.classList.contains('custom-page_home')) return;
+
+  // Match homepage Quick Links specifically
+  document.querySelectorAll('a.quicklink__url').forEach(link => {
+    const href = link.getAttribute('href') || '';
+    const title = link.querySelector('.quicklink__title h3');
+    const label = title ? title.textContent.trim().toLowerCase() : '';
+
+    const isAndroid = href === 'https://google-en-community.insided.com/' || label.includes('android');
+    const isChromeOS = href === 'https://google-en-community.insided.com/p/chromeos' || label.includes('chromeos');
+
+    if (isAndroid || isChromeOS) {
+      link.addEventListener('click', function () {
+        const selectedProduct = isChromeOS ? 'chromeos' : 'android';
+        localStorage.setItem('selectedProduct', selectedProduct);
+        // No preventDefault — let the click continue to its destination
+      });
+    }
+  });
+});
+</script>
